@@ -1,0 +1,30 @@
+# IA
+
+# Tipos
+## Sistemas especialistas
+## Visão computacional
+## Machine learning
+## Processamento de linguagem natural
+## Algoritmos genéticos
+## Mineração de dados
+## Resolução de problemas por busca
+## Lógica fuzzy
+## Raciocínio baseado em casos
+## Redes neurais
+
+# IA => Simular capacidade humana de resolver problemas
+# Inteligência Computacional => RN, computação evolucionária
+# ML => Métodos matemáticos para treinar algoritmos
+# Data Mining => Uso de algoritmos
+# Big Data => Volume imenso de dados
+
+# Métodos Preditivos
+## Classificação => Rótulos
+## Regressão => Valores
+
+# Métodos Descritivos
+## Associação
+## Agrupamento
+## Detecção de desvios
+## Padrões sequenciais
+## Sumarização

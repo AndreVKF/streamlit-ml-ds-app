@@ -1,0 +1,7 @@
+.vscode
+src/data
+
+*__pycache__
+*test*
+*.pyc
+secrets.toml
