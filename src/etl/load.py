@@ -5,7 +5,7 @@ import boto3
 import pandas as pd
 
 from aws.s3 import uploadFile
-from etl.transform import createMoviesDatabase, createMovieDbSimilarityVectors, createAnalyticsMoviesDatabase
+from etl.transform import createMoviesDatabase, createMovieDbSimilarityVectors, createAnalyticsMoviesDatabase, createXbgRegressionTrainObject
 
 DATA_PATH = os.path.join(os.getcwd(), "data", "worked")
 BUCKET_FOLDER = 'worked'
@@ -44,4 +44,19 @@ def loadWorkedMoviesDatabase(awsSession: boto3.Session):
     )
     loadedInfoPrint(filename=similarityVectorsFilename)
 
+    return
+
+def loadXbgPJMERegressionObject(awsSession: boto3.Session):
+    xbgPJMEObj = createXbgRegressionTrainObject()
+    
+    xbgPJMEObjFilename = 'xbgPJMEObj.pkl'
+    xbgPJMEObjPath = os.path.join(DATA_PATH, xbgPJMEObjFilename)
+    with open(xbgPJMEObjPath, 'wb') as f:
+        pickle.dump(xbgPJMEObj, f)
+        
+    uploadFile(
+        awsSession=awsSession, filePath=xbgPJMEObjPath, s3Key=f'{BUCKET_FOLDER}/{xbgPJMEObjFilename}'
+    )
+    loadedInfoPrint(filename=xbgPJMEObjFilename)
+    
     return

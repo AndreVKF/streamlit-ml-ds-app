@@ -17,3 +17,10 @@ def getMoviesRawDf():
     moviesRawDf = pd.read_csv(os.path.join(DATA_PATH, moviesRawFileName))
 
     return moviesRawDf
+
+
+def getPJMEHourlyRawDf():
+    pjmeHourlyFileName = 'PJME_hourly.csv'
+    pjmeHourlyRawDf = pd.read_csv(os.path.join(DATA_PATH, pjmeHourlyFileName))
+    
+    return pjmeHourlyRawDf

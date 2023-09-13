@@ -1,9 +1,10 @@
 import ast
-
-import pandas as pd
 import re
 
-from etl.extract import getCreditsDb, getMoviesRawDf
+import pandas as pd
+import xgboost as xgb
+
+from etl.extract import getCreditsDb, getMoviesRawDf, getPJMEHourlyRawDf
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -80,7 +81,8 @@ def createMoviesDatabase():
     movieTitles = filter(r.match, movieTitles)
 
     moviesRawDb = moviesRawDb.loc[moviesRawDb['title'].isin(movieTitles)]
-    cleanMovieDb = moviesRawDb.merge(creditsDb, on='title')
+    moviesRawDb = moviesRawDb.loc[moviesRawDb['vote_count'] > 200]
+    cleanMovieDb = moviesRawDb.merge(creditsDb, how='left', on='title')
 
     return cleanMovieDb
 
@@ -121,3 +123,60 @@ def createMovieDbSimilarityVectors(movieDb: pd.DataFrame):
     similarityVectors = cosine_similarity(vectors)
 
     return similarityVectors
+
+
+def createPJMETrainTestDf():
+    pjmeHourlyRawDf = getPJMEHourlyRawDf()
+    
+    #### TRANSFORM ####
+    pjmeHourlyRawDf.rename(columns={'Datetime': 'datetime'}, inplace=True)
+    pjmeHourlyRawDf['datetime'] = pd.to_datetime(pjmeHourlyRawDf['datetime'])
+    pjmeHourlyRawDf.set_index(keys=['datetime'], inplace=True)
+
+    #### FEATURE CREATION ####
+    pjmeHourlyRawDf['hour'] = pjmeHourlyRawDf.index.hour
+    pjmeHourlyRawDf['day'] = pjmeHourlyRawDf.index.day
+    pjmeHourlyRawDf['month'] = pjmeHourlyRawDf.index.month
+    pjmeHourlyRawDf['year'] = pjmeHourlyRawDf.index.year
+    pjmeHourlyRawDf['quarter'] = pjmeHourlyRawDf.index.quarter
+    pjmeHourlyRawDf['dayofyear'] = pjmeHourlyRawDf.index.dayofyear
+
+    pjmeTrain = pjmeHourlyRawDf.loc[pjmeHourlyRawDf.index < '2015-01-01']
+    pjmeTest = pjmeHourlyRawDf.loc[pjmeHourlyRawDf.index >= '2015-01-01']
+
+    return pjmeTrain, pjmeTest
+    
+def createXbgRegressionTrainObject():
+    pjmeHourlyRawDf = getPJMEHourlyRawDf()
+    pjmeTrain, pjmeTest = createPJMETrainTestDf()
+    
+    FEATURES = ['hour', 'day', 'month', 'year', 'quarter', 'dayofyear']
+    TARGET = ['PJME_MW']
+
+    X_train = pjmeTrain[FEATURES]
+    y_train = pjmeTrain[TARGET]
+
+    X_test = pjmeTest[FEATURES]
+    y_test = pjmeTest[TARGET]
+    
+    regressionModel = xgb.XGBRegressor(n_estimators=10000, early_stopping_rounds=50, learning_rate=0.01)
+    regressionModel.fit(
+        X_train,
+        y_train,
+        eval_set=[(X_train, y_train), (X_test, y_test)],
+        verbose=100)
+    
+    fi = pd.DataFrame(data=regressionModel.feature_names_in_, index=regressionModel.feature_importances_, columns=['importance'])
+    fi.sort_index(inplace=True)
+    
+    xbgObject = {
+        'raw': pjmeHourlyRawDf,
+        'X_train': X_train,
+        'y_train': y_train,
+        'X_test': X_test,
+        'y_test': y_test,
+        'model': regressionModel,
+        'featureImportance': fi
+    }
+    
+    return xbgObject

@@ -1,19 +1,16 @@
-import boto3
-import os
 import pickle
 import ast
 
 import pandas as pd
-import streamlit as st
 import numpy as np
 
+import streamlit as st
 from common.functions import setPageHeader
-
 setPageHeader()
 
-from urllib.request import urlopen
-from common.constants import AWS_BUCKET
+from common.states import fullStateReset
 from common.styles import secondaryBackgroundColor
+from urllib.request import urlopen
 from aws.client import createSession
 from aws.s3 import generatePresignedUrl
 
@@ -133,13 +130,6 @@ def createMovieCard(title: str, releaseDate: str, director: str, cast: list, ove
         unsafe_allow_html=True,
     )
 
-
-######## SESSION CONTROL ########
-def fullReset():
-    if 'recommendationMoviesIndexes' in st.session_state:
-        del st.session_state['recommendationMoviesIndexes']
-
-
 ######## APP ########
 
 st.header("Movie Recommendation 🎥")
@@ -151,10 +141,23 @@ with st.spinner('Downloading model and data. Please wait.'):
 
     movieTitles = getMovieTitles(movieDb=movieDb)
 
+with st.expander(label='Methodology'):
+    st.header("Methodology")
+    
+    st.markdown("""
+                1. Create label feature: Using movie attributes, such as the movie summary, keywords, cast, director, writer and others, into a single labeled composed feature;
+                2. Create cosine similarity vectors: Cosine similarity measures the similarity between two vectors of an inner product space. It is measured by the cosine of the angle between two vectors and determines whether two vectors are pointing in roughly the same direction;
+                3. Find similars: Compare each movie in the similarity vector to each other in order to find the "minimal distance" between two movies;
+                """)
+    
+    imageCols = st.columns([0.2, 0.6, 0.2])
+    with imageCols[1]:
+        st.image(image="assets/images/cosine_similarity.png", width=420)
+
 with st.expander(label='', expanded=True):
     st.header("Please select a movie")
 
-    title = st.selectbox(label="Movie Titles", options=movieTitles, label_visibility='visible', on_change=fullReset)
+    title = st.selectbox(label="Movie Titles", options=movieTitles, label_visibility='visible', on_change=fullStateReset)
 
     st.button(
         "Submit",
