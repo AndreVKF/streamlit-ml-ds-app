@@ -1,16 +1,20 @@
 import ast
 import re
 
+import numpy as np
 import pandas as pd
 import xgboost as xgb
 
-from etl.extract import getCreditsDb, getMoviesRawDf, getPJMEHourlyRawDf
+from etl.extract import getCreditsDb, getMoviesRawDf, getPJMEHourlyRawDf, getDivorceData
 
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix
 
 from nltk.stem.porter import PorterStemmer
-
 
 def extractAttributeFromStrListObj(obj: str, attrName: str, limit: int = None):
     if not isinstance(obj, str):
@@ -81,7 +85,7 @@ def createMoviesDatabase():
     movieTitles = filter(r.match, movieTitles)
 
     moviesRawDb = moviesRawDb.loc[moviesRawDb['title'].isin(movieTitles)]
-    moviesRawDb = moviesRawDb.loc[moviesRawDb['vote_count'] > 200]
+    moviesRawDb = moviesRawDb.loc[moviesRawDb['vote_count'] > 400]
     cleanMovieDb = moviesRawDb.merge(creditsDb, how='left', on='title')
 
     return cleanMovieDb
@@ -180,3 +184,43 @@ def createXbgRegressionTrainObject():
     }
     
     return xbgObject
+
+def createDivorceDataModel():
+    
+    divorceDataDf = getDivorceData()
+    
+    X = divorceDataDf.loc[:, ~divorceDataDf.columns.isin(['Divorce'])]
+    standardScaler = StandardScaler()
+    X_normalized = standardScaler.fit_transform(X)
+
+    y = divorceDataDf.loc[:, divorceDataDf.columns.isin(['Divorce'])]
+
+    X_train, x_test, y_train, y_test = train_test_split(X_normalized, y, test_size=0.2, random_state=0)
+
+    logisticRegression = LogisticRegression(random_state=0)
+    logisticRegression.fit(X=X_train, y=y_train)
+
+    fi = pd.DataFrame(data={'feature': X.columns, 'value': np.abs(logisticRegression.coef_[0])})
+    fi.sort_values(by='value', ascending=False, inplace=True)
+
+    mostImportantFeatures = list(fi['feature'][:11].values)
+    mostImportantFeatures.remove('Q52')
+    
+    ######### REDUCED DATA #########
+    reducedData = divorceDataDf[[*mostImportantFeatures, *['Divorce']]]
+
+    X = reducedData.loc[:, ~reducedData.columns.isin(['Divorce'])]
+    standardScaler = StandardScaler()
+    X_normalized = standardScaler.fit_transform(X)
+
+    y = reducedData.loc[:, reducedData.columns.isin(['Divorce'])]
+
+    logisticRegression = LogisticRegression(random_state=0)
+    logisticRegression.fit(X=X_normalized, y=y)
+    
+    divorceMlObject = {
+        'model': logisticRegression,
+        'scaler': standardScaler
+    }
+    
+    return divorceMlObject

@@ -379,7 +379,7 @@ if 'stockData' in st.session_state and bool(st.session_state['stockData']):
             st.metric(label='High', value=adjustValueToString(lastDateHighPx))
             
             high30D = pxData['adjclose'].iloc[-30:].max()
-            st.metric(label='30D Max.', value=adjustValueToString(high30D))
+            st.metric(label='30D Close Max.', value=adjustValueToString(high30D))
             
         with stockAnalyticsColumns[2]:
             lastDateClosePx = lastPxData['adjclose']
@@ -389,7 +389,7 @@ if 'stockData' in st.session_state and bool(st.session_state['stockData']):
             st.metric(label='Low', value=adjustValueToString(lastDateLowPx))
             
             min30D = pxData['adjclose'].iloc[-30:].min()
-            st.metric(label='30D Min.', value=adjustValueToString(min30D))
+            st.metric(label='30D Close Min.', value=adjustValueToString(min30D))
             
     with st.expander(label='', expanded=True):
         st.header("Charts")
@@ -440,3 +440,14 @@ if 'stockData' in st.session_state and bool(st.session_state['stockData']):
     with st.expander(label='', expanded=True):
         st.header("The Company")
         st.markdown(body=st.session_state['stockData']['companyInfo'])
+        
+with st.expander(label='About', expanded=False):
+    st.header("About")
+    st.markdown(body="""
+                Application uses the open yahoo finance API for data request.
+                
+                Data manipulation with pandas/numpy and plots with plotly.
+                
+                Select a stock to get the most recent available data and analytics.
+                
+                """)

@@ -5,12 +5,10 @@ from common.functions import setPageHeader
 setPageHeader()
 
 import datetime as dt
-import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-from sklearn.metrics import mean_squared_error
 from urllib.request import urlopen
 from aws.client import createSession
 from aws.s3 import generatePresignedUrl
@@ -271,6 +269,6 @@ with st.expander(label='',expanded=True):
     
 with st.expander(label='',expanded=True):
     st.header("Feature Importance")
-    st.markdown("Datetime features most likely overlap themselves. If 'month' was removed most like 'quarter' will gain more importance.")
+    st.markdown("Datetime features most likely overlap themselves. If 'month' was removed most likely 'quarter' will gain more importance.")
     
     st.plotly_chart(figure_or_data=createFeatureImportanceChart(featureImportance=featureImportance), use_container_width=True)

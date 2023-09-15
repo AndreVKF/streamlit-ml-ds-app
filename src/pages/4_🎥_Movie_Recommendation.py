@@ -141,19 +141,6 @@ with st.spinner('Downloading model and data. Please wait.'):
 
     movieTitles = getMovieTitles(movieDb=movieDb)
 
-with st.expander(label='Methodology'):
-    st.header("Methodology")
-    
-    st.markdown("""
-                1. Create label feature: Using movie attributes, such as the movie summary, keywords, cast, director, writer and others, into a single labeled composed feature;
-                2. Create cosine similarity vectors: Cosine similarity measures the similarity between two vectors of an inner product space. It is measured by the cosine of the angle between two vectors and determines whether two vectors are pointing in roughly the same direction;
-                3. Find similars: Compare each movie in the similarity vector to each other in order to find the "minimal distance" between two movies;
-                """)
-    
-    imageCols = st.columns([0.2, 0.6, 0.2])
-    with imageCols[1]:
-        st.image(image="assets/images/cosine_similarity.png", width=420)
-
 with st.expander(label='', expanded=True):
     st.header("Please select a movie")
 
@@ -184,3 +171,16 @@ if 'recommendationMoviesIndexes' in st.session_state:
 
         with st.expander(label=title, expanded=False):
             createMovieCard(title, releaseDate, director, cast, overview, genres)
+
+with st.expander(label='Methodology'):
+    st.header("Methodology")
+    
+    st.markdown("""
+                1. Create label feature: Using movie attributes, such as the movie summary, keywords, cast, director, writer and others, into a single labeled composed feature;
+                2. Create cosine similarity vectors: Cosine similarity measures the similarity between two vectors of an inner product space. It is measured by the cosine of the angle between two vectors and determines whether two vectors are pointing in roughly the same direction;
+                3. Find similars: Compare each movie in the similarity vector to each other in order to find the "minimal distance" between two movies;
+                """)
+    
+    imageCols = st.columns([0.2, 0.6, 0.2])
+    with imageCols[1]:
+        st.image(image="assets/images/cosine_similarity.png", width=420)

@@ -1,1 +1,1 @@
-from etl.load import loadWorkedMoviesDatabase, loadXbgPJMERegressionObject
+from etl.load import loadWorkedMoviesDatabase, loadXbgPJMERegressionObject, loadDiverceMlObject

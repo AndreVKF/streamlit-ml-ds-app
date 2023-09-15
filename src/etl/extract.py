@@ -24,3 +24,9 @@ def getPJMEHourlyRawDf():
     pjmeHourlyRawDf = pd.read_csv(os.path.join(DATA_PATH, pjmeHourlyFileName))
     
     return pjmeHourlyRawDf
+
+def getDivorceData():
+    divorceDataFileName = 'divorce_data.csv'
+    divorceDataRawDf = pd.read_csv(os.path.join(DATA_PATH, divorceDataFileName), sep=';')
+    
+    return divorceDataRawDf

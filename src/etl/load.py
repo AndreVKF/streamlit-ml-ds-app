@@ -5,7 +5,7 @@ import boto3
 import pandas as pd
 
 from aws.s3 import uploadFile
-from etl.transform import createMoviesDatabase, createMovieDbSimilarityVectors, createAnalyticsMoviesDatabase, createXbgRegressionTrainObject
+from etl.transform import createMoviesDatabase, createMovieDbSimilarityVectors, createAnalyticsMoviesDatabase, createXbgRegressionTrainObject, createDivorceDataModel
 
 DATA_PATH = os.path.join(os.getcwd(), "data", "worked")
 BUCKET_FOLDER = 'worked'
@@ -58,5 +58,20 @@ def loadXbgPJMERegressionObject(awsSession: boto3.Session):
         awsSession=awsSession, filePath=xbgPJMEObjPath, s3Key=f'{BUCKET_FOLDER}/{xbgPJMEObjFilename}'
     )
     loadedInfoPrint(filename=xbgPJMEObjFilename)
+    
+    return
+
+def loadDiverceMlObject(awsSession: boto3.Session):
+    divorceMlObj = createDivorceDataModel()
+    
+    divorceMlObjFilename = 'divorceMlObj.pkl'
+    divorceMlObjPath = os.path.join(DATA_PATH, divorceMlObjFilename)
+    with open(divorceMlObjPath, 'wb') as f:
+        pickle.dump(divorceMlObj, f)
+        
+    uploadFile(
+        awsSession=awsSession, filePath=divorceMlObjPath, s3Key=f'{BUCKET_FOLDER}/{divorceMlObjFilename}'
+    )
+    loadedInfoPrint(filename=divorceMlObjFilename)
     
     return
