@@ -1,3 +1,4 @@
+import os
 import pickle
 
 import streamlit as st
@@ -235,7 +236,7 @@ with st.expander(label='',expanded=True):
                 """)
     imageCols = st.columns([0.2, 0.6, 0.2])
     with imageCols[1]:
-        st.image(image='assets/images/ensemble.png')
+        st.image(image=os.path.join('assets', 'images', 'ensemble.png'))
     
 with st.expander(label='',expanded=True):
     st.header("Data Handling")

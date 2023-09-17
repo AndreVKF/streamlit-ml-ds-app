@@ -60,6 +60,7 @@ def getTickerFromCompanyName(company: str):
 
 def adjustStatsValuationDf(statsValuationDf: pd.DataFrame):
     adjStatsValuationDf = statsValuationDf.copy()
+    print(adjStatsValuationDf)
     adjStatsValuationDf.columns = ['index', 'value']
     
     return adjStatsValuationDf
