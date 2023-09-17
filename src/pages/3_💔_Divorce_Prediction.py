@@ -10,6 +10,7 @@ setPageHeader()
 
 from aws.client import createSession
 from aws.s3 import generatePresignedUrl
+from common.constants import IMAGE_LOGISTIC_REGRESSION
 
 AWS_BUCKET_PREFIX = 'worked'
 
@@ -158,7 +159,7 @@ with st.expander(label='Methodology', expanded=False):
     
     imageCols = st.columns([0.2, 0.6, 0.2])
     with imageCols[1]:
-        st.image("assets/images/logistic_regression.png")
+        st.image(IMAGE_LOGISTIC_REGRESSION)
     
     st.markdown(body="""
                 ### Data 

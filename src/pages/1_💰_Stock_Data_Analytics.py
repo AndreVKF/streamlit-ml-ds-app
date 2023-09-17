@@ -330,6 +330,7 @@ if 'stockData' in st.session_state and bool(st.session_state['stockData']):
     quoteData = st.session_state['stockData']['quoteData']
     
     statsValuationDf = st.session_state['stockData']['statsValuation']
+    st.dataframe(statsValuationDf)
     statsValuationDf = adjustStatsValuationDf(statsValuationDf)
     
     with st.expander(label='', expanded=True):

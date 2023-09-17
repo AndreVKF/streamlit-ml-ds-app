@@ -10,9 +10,11 @@ setPageHeader()
 
 from common.states import fullStateReset
 from common.styles import secondaryBackgroundColor
+from common.constants import IMAGE_COSINE_SIMILARITY
 from urllib.request import urlopen
 from aws.client import createSession
 from aws.s3 import generatePresignedUrl
+
 
 AWS_BUCKET_PREFIX = 'worked'
 
@@ -183,4 +185,4 @@ with st.expander(label='Methodology'):
     
     imageCols = st.columns([0.2, 0.6, 0.2])
     with imageCols[1]:
-        st.image(image="assets/images/cosine_similarity.png", width=420)
+        st.image(image=IMAGE_COSINE_SIMILARITY, width=420)

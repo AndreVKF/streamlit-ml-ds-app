@@ -13,6 +13,7 @@ import plotly.graph_objects as go
 from urllib.request import urlopen
 from aws.client import createSession
 from aws.s3 import generatePresignedUrl
+from common.constants import IMAGE_ENSEMBLE_EXAMPLE
 
 AWS_BUCKET_PREFIX = 'worked'
 
@@ -236,7 +237,7 @@ with st.expander(label='',expanded=True):
                 """)
     imageCols = st.columns([0.2, 0.6, 0.2])
     with imageCols[1]:
-        st.image(image=os.path.join('assets', 'images', 'ensemble.png'))
+        st.image(image=IMAGE_ENSEMBLE_EXAMPLE)
     
 with st.expander(label='',expanded=True):
     st.header("Data Handling")
