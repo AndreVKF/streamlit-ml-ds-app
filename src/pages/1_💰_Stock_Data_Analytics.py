@@ -60,7 +60,6 @@ def getTickerFromCompanyName(company: str):
 
 def adjustStatsValuationDf(statsValuationDf: pd.DataFrame):
     adjStatsValuationDf = statsValuationDf.copy()
-    print(adjStatsValuationDf)
     adjStatsValuationDf.columns = ['index', 'value']
     
     return adjStatsValuationDf
@@ -303,7 +302,7 @@ def getStockData(ticker: str):
     st.session_state['stockData'] = {
         'pxData': yahoo_Fin.pxData,
         'quoteData': yahoo_Fin.quoteData,
-        'statsValuation': yahoo_Fin.statsValuation,
+        'statsValuation': yahoo_Fin.statsValuation.iloc[:, :2],
         'companyInfo': yahoo_Fin.companyInfo
         }
 
@@ -330,7 +329,6 @@ if 'stockData' in st.session_state and bool(st.session_state['stockData']):
     quoteData = st.session_state['stockData']['quoteData']
     
     statsValuationDf = st.session_state['stockData']['statsValuation']
-    st.dataframe(statsValuationDf)
     statsValuationDf = adjustStatsValuationDf(statsValuationDf)
     
     with st.expander(label='', expanded=True):
